@@ -81,4 +81,19 @@ public class UsuarioService {
 
         return dto;
     }
+
+    public UsuarioResponseDTO fazerLogin(LoginDTO loginDTO) {
+        Usuario usuario = repository.findByEmail(loginDTO.getEmail())
+                .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado com este email"));
+
+        if (!encoder.matches(loginDTO.getSenha(), usuario.getSenha())) {
+            throw new SenhaInvalidaException("Senha inválida");
+        }
+
+        UsuarioResponseDTO response = new UsuarioResponseDTO();
+        response.setMensagem("Login realizado com sucesso");
+        response.setUsuario(converterParaDTO(usuario));
+
+        return response;
+    }
 }
