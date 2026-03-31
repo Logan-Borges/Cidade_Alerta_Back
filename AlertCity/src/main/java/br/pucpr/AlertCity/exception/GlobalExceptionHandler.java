@@ -33,6 +33,17 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    @ExceptionHandler(SenhaInvalidaException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErroResponse handleSenhaInvalida(SenhaInvalidaException ex, HttpServletRequest request) {
+        return ErroResponse.builder()
+                .status(401)
+                .erro(ex.getMessage())
+                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErroResponse handleGeral(Exception ex, HttpServletRequest request) {

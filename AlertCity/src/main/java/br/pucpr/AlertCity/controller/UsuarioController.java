@@ -34,4 +34,9 @@ public class UsuarioController {
     public void deletar(@PathVariable Long id) {
         service.deletarUsuario(id);
     }
+
+    @PostMapping("/login")
+    public UsuarioResponseDTO login(@RequestBody LoginDTO loginDTO) {
+        return service.fazerLogin(loginDTO);
+    }
 }
