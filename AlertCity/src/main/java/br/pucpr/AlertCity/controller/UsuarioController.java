@@ -1,5 +1,6 @@
 package br.pucpr.AlertCity.controller;
 
+import br.pucpr.AlertCity.dto.LoginDTO;
 import br.pucpr.AlertCity.dto.UsuarioDTO;
 import br.pucpr.AlertCity.dto.UsuarioResponseDTO;
 import br.pucpr.AlertCity.service.UsuarioService;

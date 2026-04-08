@@ -1,31 +1,34 @@
-package br.pucpr.AlertCity.model;
+    package br.pucpr.AlertCity.model;
 
-import jakarta.persistence.*;
+    import br.pucpr.AlertCity.security.Role;
+    import jakarta.persistence.*;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+    import lombok.Getter;
+    import lombok.Setter;
+    import lombok.NoArgsConstructor;
+    import lombok.AllArgsConstructor;
 
-@Entity
-@Table(name = "usuarios")
+    @Entity
+    @Table(name = "usuarios")
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
 
-public class Usuario {
+    public class Usuario {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
-    private String nome;
+        private String nome;
 
-    @Column(unique = true)
-    private String email;
+        @Column(unique = true)
+        private String email;
 
-    private String senha;
-}
+        private String senha;
+
+        @Enumerated(EnumType.STRING)
+        private Role role = Role.USER;
+    }
