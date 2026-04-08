@@ -1,10 +1,19 @@
 package br.pucpr.AlertCity.model;
 
-public enum Bairro {
-    CAJURU,
-    BATEL,
-    CENTRO,
-    BOQUEIRAO,
-    SANTA_FELICIDADE
-    // Adicione outros bairros fixos conforme necessário
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "bairros")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Bairro {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String nome;
 }

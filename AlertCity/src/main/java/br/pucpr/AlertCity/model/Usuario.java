@@ -41,7 +41,7 @@ public class Usuario {
     @Column(nullable = false)
     private String cpf;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bairro_id", nullable = false)
     private Bairro bairro;
 }

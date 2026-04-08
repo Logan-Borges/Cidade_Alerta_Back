@@ -7,7 +7,9 @@ import br.pucpr.AlertCity.exception.EmailJaCadastradoException;
 import br.pucpr.AlertCity.exception.UsuarioNaoEncontradoException;
 import br.pucpr.AlertCity.exception.SenhaInvalidaException;
 import br.pucpr.AlertCity.model.Usuario;
+import br.pucpr.AlertCity.model.Bairro;
 import br.pucpr.AlertCity.repository.UsuarioRepository;
+import br.pucpr.AlertCity.repository.BairroRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,6 +21,7 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository repository;
+    private final BairroRepository bairroRepository;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     public UsuarioResponseDTO criarUsuario(UsuarioDTO dto) {
@@ -32,7 +35,9 @@ public class UsuarioService {
         usuario.setEmail(dto.getEmail());
         usuario.setCpf(dto.getCpf());
         usuario.setSenha(encoder.encode(dto.getSenha()));
-        usuario.setBairro(dto.getBairro());
+        Bairro bairro = bairroRepository.findById(dto.getBairroId())
+            .orElseThrow(() -> new RuntimeException("Bairro não encontrado"));
+        usuario.setBairro(bairro);
 
         Usuario salvo = repository.save(usuario);
 
@@ -58,7 +63,9 @@ public class UsuarioService {
         usuario.setNome(dto.getNome());
         usuario.setEmail(dto.getEmail());
         usuario.setCpf(dto.getCpf());
-        usuario.setBairro(dto.getBairro());
+        Bairro bairro = bairroRepository.findById(dto.getBairroId())
+            .orElseThrow(() -> new RuntimeException("Bairro não encontrado"));
+        usuario.setBairro(bairro);
 
         if (dto.getSenha() != null && !dto.getSenha().isEmpty()) {
             usuario.setSenha(encoder.encode(dto.getSenha()));
@@ -85,7 +92,7 @@ public class UsuarioService {
         dto.setEmail(usuario.getEmail());
         dto.setSenha(usuario.getSenha()); // hash aparece no Postman
         dto.setCpf(usuario.getCpf());
-        dto.setBairro(usuario.getBairro());
+        dto.setBairroId(usuario.getBairro() != null ? usuario.getBairro().getId() : null);
 
         return dto;
     }
