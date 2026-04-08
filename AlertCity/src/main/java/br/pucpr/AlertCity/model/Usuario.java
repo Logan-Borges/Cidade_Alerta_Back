@@ -1,47 +1,34 @@
-package br.pucpr.AlertCity.model;
+    package br.pucpr.AlertCity.model;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
+    import br.pucpr.AlertCity.security.Role;
+    import jakarta.persistence.*;
 
-@Entity
-@Table(name = "usuarios")
+    import lombok.Getter;
+    import lombok.Setter;
+    import lombok.NoArgsConstructor;
+    import lombok.AllArgsConstructor;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+    @Entity
+    @Table(name = "usuarios")
 
-public class Usuario {
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    public class Usuario {
 
-    @NotBlank(message = "Nome é obrigatório")
-    @Column(nullable = false)
-    private String nome;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
-    @NotBlank(message = "Email é obrigatório")
-    @Email(message = "Email inválido")
-    @Column(unique = true, nullable = false)
-    private String email;
+        private String nome;
 
-    @NotBlank(message = "Senha é obrigatória")
-    @Column(nullable = false)
-    private String senha;
+        @Column(unique = true)
+        private String email;
 
-    @NotBlank(message = "CPF é obrigatório")
-    @Size(min = 11, max = 11, message = "CPF deve ter 11 dígitos")
-    @Column(nullable = false)
-    private String cpf;
+        private String senha;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Bairro bairro;
-}
+        @Enumerated(EnumType.STRING)
+        private Role role = Role.USER;
+    }

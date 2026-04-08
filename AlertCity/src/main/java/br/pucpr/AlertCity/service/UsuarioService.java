@@ -1,9 +1,12 @@
 package br.pucpr.AlertCity.service;
 
+import br.pucpr.AlertCity.security.Role;
+import br.pucpr.AlertCity.dto.LoginDTO;
 import br.pucpr.AlertCity.dto.UsuarioDTO;
 import br.pucpr.AlertCity.dto.UsuarioResponseDTO;
 import br.pucpr.AlertCity.dto.LoginDTO;
 import br.pucpr.AlertCity.exception.EmailJaCadastradoException;
+import br.pucpr.AlertCity.exception.SenhaInvalidaException;
 import br.pucpr.AlertCity.exception.UsuarioNaoEncontradoException;
 import br.pucpr.AlertCity.exception.SenhaInvalidaException;
 import br.pucpr.AlertCity.model.Usuario;
@@ -32,7 +35,7 @@ public class UsuarioService {
         usuario.setEmail(dto.getEmail());
         usuario.setCpf(dto.getCpf());
         usuario.setSenha(encoder.encode(dto.getSenha()));
-        usuario.setBairro(dto.getBairro());
+        usuario.setRole(Role.USER);
 
         Usuario salvo = repository.save(usuario);
 
