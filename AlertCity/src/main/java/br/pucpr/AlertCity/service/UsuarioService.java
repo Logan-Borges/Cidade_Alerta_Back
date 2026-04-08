@@ -4,9 +4,11 @@ import br.pucpr.AlertCity.security.Role;
 import br.pucpr.AlertCity.dto.LoginDTO;
 import br.pucpr.AlertCity.dto.UsuarioDTO;
 import br.pucpr.AlertCity.dto.UsuarioResponseDTO;
+import br.pucpr.AlertCity.dto.LoginDTO;
 import br.pucpr.AlertCity.exception.EmailJaCadastradoException;
 import br.pucpr.AlertCity.exception.SenhaInvalidaException;
 import br.pucpr.AlertCity.exception.UsuarioNaoEncontradoException;
+import br.pucpr.AlertCity.exception.SenhaInvalidaException;
 import br.pucpr.AlertCity.model.Usuario;
 import br.pucpr.AlertCity.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class UsuarioService {
         Usuario usuario = new Usuario();
         usuario.setNome(dto.getNome());
         usuario.setEmail(dto.getEmail());
+        usuario.setCpf(dto.getCpf());
         usuario.setSenha(encoder.encode(dto.getSenha()));
         usuario.setRole(Role.USER);
 
@@ -57,6 +60,8 @@ public class UsuarioService {
 
         usuario.setNome(dto.getNome());
         usuario.setEmail(dto.getEmail());
+        usuario.setCpf(dto.getCpf());
+        usuario.setBairro(dto.getBairro());
 
         if (dto.getSenha() != null && !dto.getSenha().isEmpty()) {
             usuario.setSenha(encoder.encode(dto.getSenha()));
@@ -82,6 +87,8 @@ public class UsuarioService {
         dto.setNome(usuario.getNome());
         dto.setEmail(usuario.getEmail());
         dto.setSenha(usuario.getSenha()); // hash aparece no Postman
+        dto.setCpf(usuario.getCpf());
+        dto.setBairro(usuario.getBairro());
 
         return dto;
     }
