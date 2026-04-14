@@ -1,5 +1,6 @@
 package br.pucpr.AlertCity.model;
 
+import br.pucpr.AlertCity.security.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,4 +45,9 @@ public class Usuario {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bairro_id", nullable = false)
     private Bairro bairro;
+
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
+
 }
+
