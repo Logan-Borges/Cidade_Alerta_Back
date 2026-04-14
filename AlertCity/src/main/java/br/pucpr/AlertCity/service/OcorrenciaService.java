@@ -71,5 +71,13 @@ public class OcorrenciaService {
         o.setTipo(dto.getTipo());
 
         return converterParaDTO(ocorrenciaRepository.save(o));
+
+    }
+
+    public void deletar(Long id) {
+        if (!ocorrenciaRepository.existsById(id)) {
+            throw new RuntimeException("Ocorrência não encontrada");
+        }
+        ocorrenciaRepository.deleteById(id);
     }
 }

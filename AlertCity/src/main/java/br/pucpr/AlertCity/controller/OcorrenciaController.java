@@ -30,4 +30,9 @@ public class OcorrenciaController {
     public OcorrenciaDTO atualizar(@PathVariable Long id, @RequestBody OcorrenciaDTO dto) {
         return service.atualizar(id, dto);
     }
+
+    @DeleteMapping("/{id}")
+    public void deletar(@PathVariable Long id) {
+        service.deletar(id);
+    }
 }
