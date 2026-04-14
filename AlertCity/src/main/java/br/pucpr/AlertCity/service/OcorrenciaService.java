@@ -60,4 +60,16 @@ public class OcorrenciaService {
         dto.setBairroId(o.getBairro().getId());
         return dto;
     }
+
+    public OcorrenciaDTO atualizar(Long id, OcorrenciaDTO dto) {
+
+        Ocorrencia o = ocorrenciaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ocorrência não encontrada"));
+
+        o.setTitulo(dto.getTitulo());
+        o.setDescricao(dto.getDescricao());
+        o.setTipo(dto.getTipo());
+
+        return converterParaDTO(ocorrenciaRepository.save(o));
+    }
 }
