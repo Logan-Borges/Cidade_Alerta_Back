@@ -5,6 +5,8 @@ import br.pucpr.AlertCity.service.OcorrenciaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/ocorrencias")
 @RequiredArgsConstructor
@@ -12,8 +14,15 @@ public class OcorrenciaController {
 
     private final OcorrenciaService service;
 
+
     @PostMapping
-    public void criar(@RequestBody OcorrenciaDTO dto) {
-        service.salvar(dto);
+    public OcorrenciaDTO criar(@RequestBody OcorrenciaDTO dto) {
+        return service.salvar(dto);
+    }
+
+
+    @GetMapping
+    public List<OcorrenciaDTO> listar() {
+        return service.listar();
     }
 }

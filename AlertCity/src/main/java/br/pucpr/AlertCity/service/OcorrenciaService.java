@@ -1,10 +1,16 @@
 package br.pucpr.AlertCity.service;
 
 import br.pucpr.AlertCity.dto.OcorrenciaDTO;
-import br.pucpr.AlertCity.model.*;
-import br.pucpr.AlertCity.repository.*;
+import br.pucpr.AlertCity.model.Bairro;
+import br.pucpr.AlertCity.model.Ocorrencia;
+import br.pucpr.AlertCity.model.Usuario;
+import br.pucpr.AlertCity.repository.BairroRepository;
+import br.pucpr.AlertCity.repository.OcorrenciaRepository;
+import br.pucpr.AlertCity.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -14,7 +20,8 @@ public class OcorrenciaService {
     private final UsuarioRepository usuarioRepository;
     private final BairroRepository bairroRepository;
 
-    public void salvar(OcorrenciaDTO dto) {
+
+    public OcorrenciaDTO salvar(OcorrenciaDTO dto) {
 
         Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
@@ -29,6 +36,28 @@ public class OcorrenciaService {
         ocorrencia.setUsuario(usuario);
         ocorrencia.setBairro(bairro);
 
-        ocorrenciaRepository.save(ocorrencia);
+        Ocorrencia salva = ocorrenciaRepository.save(ocorrencia);
+
+        return converterParaDTO(salva);
+    }
+
+
+    public List<OcorrenciaDTO> listar() {
+        return ocorrenciaRepository.findAll()
+                .stream()
+                .map(this::converterParaDTO)
+                .toList();
+    }
+
+
+    private OcorrenciaDTO converterParaDTO(Ocorrencia o) {
+        OcorrenciaDTO dto = new OcorrenciaDTO();
+        dto.setId(o.getId());
+        dto.setTitulo(o.getTitulo());
+        dto.setDescricao(o.getDescricao());
+        dto.setTipo(o.getTipo());
+        dto.setUsuarioId(o.getUsuario().getId());
+        dto.setBairroId(o.getBairro().getId());
+        return dto;
     }
 }
