@@ -8,6 +8,9 @@ public class OcorrenciaDTO {
     private String titulo;
     private String descricao;
     private String tipo;
+    private String urgencia;
+    private String status;
     private Long usuarioId;
     private Long bairroId;
+    private String fotoUrl;
 }

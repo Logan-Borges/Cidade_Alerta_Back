@@ -23,7 +23,16 @@ public class Ocorrencia {
     @Column(length = 1000)
     private String descricao;
 
-    private String tipo; // exemplo: ROUBO, ACIDENTE, INCENDIO
+    private String tipo;
+
+    private String urgencia;
+
+    private String status;
+
+    @Column(name = "foto_url")
+    private String fotoUrl;
+
+
 
     private LocalDateTime data = LocalDateTime.now();
 

@@ -9,8 +9,13 @@ import br.pucpr.AlertCity.repository.OcorrenciaRepository;
 import br.pucpr.AlertCity.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +26,7 @@ public class OcorrenciaService {
     private final BairroRepository bairroRepository;
 
 
-    public OcorrenciaDTO salvar(OcorrenciaDTO dto) {
+    public OcorrenciaDTO salvar(OcorrenciaDTO dto, MultipartFile foto) {
 
         Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
@@ -29,18 +34,35 @@ public class OcorrenciaService {
         Bairro bairro = bairroRepository.findById(dto.getBairroId())
                 .orElseThrow(() -> new RuntimeException("Bairro não encontrado"));
 
+        String caminhoFoto = null;
+
+        try {
+            if (foto != null && !foto.isEmpty()) {
+                String nomeArquivo = System.currentTimeMillis() + "_" + foto.getOriginalFilename();
+                Path caminho = Paths.get("uploads/" + nomeArquivo);
+                Files.createDirectories(caminho.getParent());
+                Files.write(caminho, foto.getBytes());
+
+                caminhoFoto = "/uploads/" + nomeArquivo;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao salvar imagem");
+        }
+
         Ocorrencia ocorrencia = new Ocorrencia();
         ocorrencia.setTitulo(dto.getTitulo());
         ocorrencia.setDescricao(dto.getDescricao());
         ocorrencia.setTipo(dto.getTipo());
+        ocorrencia.setUrgencia(dto.getUrgencia());
+        ocorrencia.setStatus(dto.getStatus());
         ocorrencia.setUsuario(usuario);
         ocorrencia.setBairro(bairro);
+        ocorrencia.setFotoUrl(caminhoFoto);
 
         Ocorrencia salva = ocorrenciaRepository.save(ocorrencia);
 
         return converterParaDTO(salva);
     }
-
 
     public List<OcorrenciaDTO> listar() {
         return ocorrenciaRepository.findAll()
@@ -49,15 +71,17 @@ public class OcorrenciaService {
                 .toList();
     }
 
-
     private OcorrenciaDTO converterParaDTO(Ocorrencia o) {
         OcorrenciaDTO dto = new OcorrenciaDTO();
         dto.setId(o.getId());
         dto.setTitulo(o.getTitulo());
         dto.setDescricao(o.getDescricao());
         dto.setTipo(o.getTipo());
+        dto.setUrgencia(o.getUrgencia());
+        dto.setStatus(o.getStatus());
         dto.setUsuarioId(o.getUsuario().getId());
         dto.setBairroId(o.getBairro().getId());
+        dto.setFotoUrl(o.getFotoUrl());
         return dto;
     }
 
@@ -71,7 +95,6 @@ public class OcorrenciaService {
         o.setTipo(dto.getTipo());
 
         return converterParaDTO(ocorrenciaRepository.save(o));
-
     }
 
     public void deletar(Long id) {
