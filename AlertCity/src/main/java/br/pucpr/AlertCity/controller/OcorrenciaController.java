@@ -4,6 +4,7 @@ import br.pucpr.AlertCity.dto.OcorrenciaDTO;
 import br.pucpr.AlertCity.service.OcorrenciaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,11 +16,13 @@ public class OcorrenciaController {
     private final OcorrenciaService service;
 
 
-    @PostMapping
-    public OcorrenciaDTO criar(@RequestBody OcorrenciaDTO dto) {
-        return service.salvar(dto);
+    @PostMapping(consumes = "multipart/form-data")
+    public OcorrenciaDTO criar(
+            @RequestPart("dados") OcorrenciaDTO dto,
+            @RequestPart(value = "foto", required = false) MultipartFile foto
+    ) {
+        return service.salvar(dto, foto);
     }
-
 
     @GetMapping
     public List<OcorrenciaDTO> listar() {
