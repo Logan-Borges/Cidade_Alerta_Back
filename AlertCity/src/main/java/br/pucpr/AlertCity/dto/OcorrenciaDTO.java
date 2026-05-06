@@ -12,5 +12,5 @@ public class OcorrenciaDTO {
     private String status;
     private Long usuarioId;
     private Long bairroId;
-    private String fotoUrl;
+    private String fotoBase64;
 }

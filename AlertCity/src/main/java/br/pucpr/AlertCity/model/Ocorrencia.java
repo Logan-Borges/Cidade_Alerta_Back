@@ -29,8 +29,9 @@ public class Ocorrencia {
 
     private String status;
 
-    @Column(name = "foto_url")
-    private String fotoUrl;
+    @Lob
+    @Column(name = "foto")
+    private byte[] foto;
 
 
 
