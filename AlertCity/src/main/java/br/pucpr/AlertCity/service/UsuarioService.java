@@ -117,4 +117,16 @@ public class UsuarioService {
 
         return response;
     }
+
+    public UsuarioDTO buscarPorEmail(String email) {
+        Usuario usuario = repository.findByEmail(email)
+                .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado"));
+        return converterParaDTO(usuario);
+    }
+
+    public UsuarioDTO atualizarPorEmail(String email, UsuarioDTO dto) {
+        Usuario usuario = repository.findByEmail(email)
+                .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado"));
+        return atualizarUsuario(usuario.getId(), dto);
+    }
 }

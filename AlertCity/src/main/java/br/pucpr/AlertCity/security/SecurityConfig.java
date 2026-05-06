@@ -28,7 +28,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/usuarios/**").permitAll()
                         .requestMatchers("/ocorrencias/**").permitAll()
-                        .requestMatchers("/bairrosW/**").permitAll()
+                        .requestMatchers("/bairros/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
