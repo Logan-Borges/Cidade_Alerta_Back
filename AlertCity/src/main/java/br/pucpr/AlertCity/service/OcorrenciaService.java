@@ -9,13 +9,9 @@ import br.pucpr.AlertCity.repository.OcorrenciaRepository;
 import br.pucpr.AlertCity.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Base64;
 import java.util.List;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -25,29 +21,12 @@ public class OcorrenciaService {
     private final UsuarioRepository usuarioRepository;
     private final BairroRepository bairroRepository;
 
-
-    public OcorrenciaDTO salvar(OcorrenciaDTO dto, MultipartFile foto) {
-
+    public OcorrenciaDTO salvar(OcorrenciaDTO dto) {
         Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         Bairro bairro = bairroRepository.findById(dto.getBairroId())
                 .orElseThrow(() -> new RuntimeException("Bairro não encontrado"));
-
-        String caminhoFoto = null;
-
-        try {
-            if (foto != null && !foto.isEmpty()) {
-                String nomeArquivo = System.currentTimeMillis() + "_" + foto.getOriginalFilename();
-                Path caminho = Paths.get("uploads/" + nomeArquivo);
-                Files.createDirectories(caminho.getParent());
-                Files.write(caminho, foto.getBytes());
-
-                caminhoFoto = "/uploads/" + nomeArquivo;
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Erro ao salvar imagem");
-        }
 
         Ocorrencia ocorrencia = new Ocorrencia();
         ocorrencia.setTitulo(dto.getTitulo());
@@ -57,11 +36,12 @@ public class OcorrenciaService {
         ocorrencia.setStatus(dto.getStatus());
         ocorrencia.setUsuario(usuario);
         ocorrencia.setBairro(bairro);
-        ocorrencia.setFotoUrl(caminhoFoto);
 
-        Ocorrencia salva = ocorrenciaRepository.save(ocorrencia);
+        if (dto.getFotoBase64() != null) {
+            ocorrencia.setFoto(Base64.getDecoder().decode(dto.getFotoBase64()));
+        }
 
-        return converterParaDTO(salva);
+        return converterParaDTO(ocorrenciaRepository.save(ocorrencia));
     }
 
     public List<OcorrenciaDTO> listar() {
@@ -81,18 +61,27 @@ public class OcorrenciaService {
         dto.setStatus(o.getStatus());
         dto.setUsuarioId(o.getUsuario().getId());
         dto.setBairroId(o.getBairro().getId());
-        dto.setFotoUrl(o.getFotoUrl());
+
+        if (o.getFoto() != null) {
+            dto.setFotoBase64(Base64.getEncoder().encodeToString(o.getFoto()));
+        }
+
         return dto;
     }
 
     public OcorrenciaDTO atualizar(Long id, OcorrenciaDTO dto) {
-
         Ocorrencia o = ocorrenciaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ocorrência não encontrada"));
 
         o.setTitulo(dto.getTitulo());
         o.setDescricao(dto.getDescricao());
         o.setTipo(dto.getTipo());
+        o.setUrgencia(dto.getUrgencia());
+        o.setStatus(dto.getStatus());
+
+        if (dto.getFotoBase64() != null) {
+            o.setFoto(Base64.getDecoder().decode(dto.getFotoBase64()));
+        }
 
         return converterParaDTO(ocorrenciaRepository.save(o));
     }

@@ -16,12 +16,9 @@ public class OcorrenciaController {
     private final OcorrenciaService service;
 
 
-    @PostMapping(consumes = "multipart/form-data")
-    public OcorrenciaDTO criar(
-            @RequestPart("dados") OcorrenciaDTO dto,
-            @RequestPart(value = "foto", required = false) MultipartFile foto
-    ) {
-        return service.salvar(dto, foto);
+    @PostMapping
+    public OcorrenciaDTO criar(@RequestBody OcorrenciaDTO dto) {
+        return service.salvar(dto);
     }
 
     @GetMapping
