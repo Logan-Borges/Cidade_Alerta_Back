@@ -6,6 +6,8 @@ import br.pucpr.AlertCity.dto.UsuarioResponseDTO;
 import br.pucpr.AlertCity.dto.LoginDTO;
 import br.pucpr.AlertCity.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -40,5 +42,16 @@ public class UsuarioController {
     @PostMapping("/login")
     public UsuarioResponseDTO login(@RequestBody LoginDTO loginDTO) {
         return service.fazerLogin(loginDTO);
+    }
+
+    @GetMapping("/perfil")
+    public UsuarioDTO perfil(@AuthenticationPrincipal UserDetails userDetails) {
+        return service.buscarPorEmail(userDetails.getUsername());
+    }
+
+    @PutMapping("/perfil")
+    public UsuarioDTO atualizarPerfil(@AuthenticationPrincipal UserDetails userDetails,
+                                      @RequestBody UsuarioDTO dto) {
+        return service.atualizarPorEmail(userDetails.getUsername(), dto);
     }
 }
