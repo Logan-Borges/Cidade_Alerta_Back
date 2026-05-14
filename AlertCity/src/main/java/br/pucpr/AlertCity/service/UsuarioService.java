@@ -1,10 +1,8 @@
 package br.pucpr.AlertCity.service;
 
-import br.pucpr.AlertCity.dto.LoginDTO;
 import br.pucpr.AlertCity.dto.UsuarioDTO;
 import br.pucpr.AlertCity.dto.UsuarioResponseDTO;
 import br.pucpr.AlertCity.exception.EmailJaCadastradoException;
-import br.pucpr.AlertCity.exception.SenhaInvalidaException;
 import br.pucpr.AlertCity.exception.UsuarioNaoEncontradoException;
 import br.pucpr.AlertCity.model.Bairro;
 import br.pucpr.AlertCity.model.Usuario;
@@ -101,21 +99,6 @@ public class UsuarioService {
         dto.setBairroId(usuario.getBairro().getId());
 
         return dto;
-    }
-
-    public UsuarioResponseDTO fazerLogin(LoginDTO loginDTO) {
-        Usuario usuario = repository.findByEmail(loginDTO.getEmail())
-                .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado com este email"));
-
-        if (!encoder.matches(loginDTO.getSenha(), usuario.getSenha())) {
-            throw new SenhaInvalidaException("Senha inválida");
-        }
-
-        UsuarioResponseDTO response = new UsuarioResponseDTO();
-        response.setMensagem("Login realizado com sucesso");
-        response.setUsuario(converterParaDTO(usuario));
-
-        return response;
     }
 
     public UsuarioDTO buscarPorEmail(String email) {
