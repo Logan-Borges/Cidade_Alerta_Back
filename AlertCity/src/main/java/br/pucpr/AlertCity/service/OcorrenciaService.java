@@ -6,6 +6,7 @@ import br.pucpr.AlertCity.model.Ocorrencia;
 import br.pucpr.AlertCity.model.Usuario;
 import br.pucpr.AlertCity.repository.BairroRepository;
 import br.pucpr.AlertCity.repository.OcorrenciaRepository;
+import br.pucpr.AlertCity.repository.UrgenciaRepository;
 import br.pucpr.AlertCity.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 public class OcorrenciaService {
 
     private final OcorrenciaRepository ocorrenciaRepository;
+    private final UrgenciaRepository urgenciaRepository;
     private final UsuarioRepository usuarioRepository;
     private final BairroRepository bairroRepository;
 
@@ -61,6 +63,7 @@ public class OcorrenciaService {
         dto.setStatus(o.getStatus());
         dto.setUsuarioId(o.getUsuario().getId());
         dto.setBairroId(o.getBairro().getId());
+        dto.setTotalUrgencia(urgenciaRepository.countByOcorrencia_Id(o.getId()));
 
         if (o.getFoto() != null) {
             dto.setFotoBase64(Base64.getEncoder().encodeToString(o.getFoto()));
