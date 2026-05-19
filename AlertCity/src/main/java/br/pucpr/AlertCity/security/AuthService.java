@@ -32,7 +32,7 @@ public class AuthService {
 
             UserAuthentication auth = new UserAuthentication();
             auth.setEmail(user.getEmail());
-            auth.setRole(user.getRole());
+            auth.setRole(user.getRole() != null ? user.getRole() : Role.USER);
 
             System.out.println("ANTES DO TOKEN");
 
