@@ -38,6 +38,11 @@ public class OcorrenciaService {
         ocorrencia.setStatus(dto.getStatus());
         ocorrencia.setUsuario(usuario);
         ocorrencia.setBairro(bairro);
+        ocorrencia.setCep(dto.getCep());
+        ocorrencia.setRua(dto.getRua());
+        ocorrencia.setBairroNome(dto.getBairroNome());
+        ocorrencia.setLat(dto.getLat());
+        ocorrencia.setLng(dto.getLng());
 
         if (dto.getFotoBase64() != null) {
             ocorrencia.setFoto(Base64.getDecoder().decode(dto.getFotoBase64()));
@@ -63,6 +68,11 @@ public class OcorrenciaService {
         dto.setStatus(o.getStatus());
         dto.setUsuarioId(o.getUsuario().getId());
         dto.setBairroId(o.getBairro().getId());
+        dto.setCep(o.getCep());
+        dto.setRua(o.getRua());
+        dto.setBairroNome(o.getBairroNome());
+        dto.setLat(o.getLat());
+        dto.setLng(o.getLng());
         dto.setTotalUrgencia(urgenciaRepository.countByOcorrencia_Id(o.getId()));
 
         if (o.getFoto() != null) {
@@ -81,6 +91,11 @@ public class OcorrenciaService {
         o.setTipo(dto.getTipo());
         o.setUrgencia(dto.getUrgencia());
         o.setStatus(dto.getStatus());
+        o.setCep(dto.getCep());
+        o.setRua(dto.getRua());
+        o.setBairroNome(dto.getBairroNome());
+        o.setLat(dto.getLat());
+        o.setLng(dto.getLng());
 
         if (dto.getFotoBase64() != null) {
             o.setFoto(Base64.getDecoder().decode(dto.getFotoBase64()));
