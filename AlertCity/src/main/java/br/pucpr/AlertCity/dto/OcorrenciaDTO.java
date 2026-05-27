@@ -14,4 +14,9 @@ public class OcorrenciaDTO {
     private Long bairroId;
     private String fotoBase64;
     private long totalUrgencia;
+    private String cep;
+    private String rua;
+    private String bairroNome;
+    private Double lat;
+    private Double lng;
 }

@@ -29,11 +29,15 @@ public class Ocorrencia {
 
     private String status;
 
+    private String cep;
+    private String rua;
+    private String bairroNome;
+    private Double lat;
+    private Double lng;
+
     @Lob
     @Column(name = "foto")
     private byte[] foto;
-
-
 
     private LocalDateTime data = LocalDateTime.now();
 
