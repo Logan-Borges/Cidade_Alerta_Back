@@ -1,8 +1,8 @@
 package br.pucpr.AlertCity.exception;
 
+import br.pucpr.AlertCity.exception.FiltroInvalidoException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -13,6 +13,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EmailJaCadastradoException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErroResponse handleEmail(EmailJaCadastradoException ex, HttpServletRequest request) {
+
         return ErroResponse.builder()
                 .status(400)
                 .erro(ex.getMessage())
@@ -24,8 +25,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UsuarioNaoEncontradoException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErroResponse handleNotFound(UsuarioNaoEncontradoException ex, HttpServletRequest request) {
+
         return ErroResponse.builder()
                 .status(404)
+                .erro(ex.getMessage())
+                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    @ExceptionHandler(FiltroInvalidoException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErroResponse handleFiltroInvalido(FiltroInvalidoException ex, HttpServletRequest request) {
+
+        return ErroResponse.builder()
+                .status(400)
                 .erro(ex.getMessage())
                 .path(request.getRequestURI())
                 .timestamp(LocalDateTime.now())
@@ -46,10 +60,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErroResponse handleGeral(Exception ex, HttpServletRequest request) {
-        ex.printStackTrace();
+
         return ErroResponse.builder()
                 .status(500)
-                .erro(ex.getMessage() + " | causa: " + (ex.getCause() != null ? ex.getCause().getMessage() : "sem causa"))
+                .erro("Erro interno no servidor")
                 .path(request.getRequestURI())
                 .timestamp(LocalDateTime.now())
                 .build();

@@ -4,6 +4,7 @@ import br.pucpr.AlertCity.dto.OcorrenciaDTO;
 import br.pucpr.AlertCity.model.Bairro;
 import br.pucpr.AlertCity.model.Ocorrencia;
 import br.pucpr.AlertCity.model.Usuario;
+import br.pucpr.AlertCity.exception.FiltroInvalidoException;
 import br.pucpr.AlertCity.repository.BairroRepository;
 import br.pucpr.AlertCity.repository.OcorrenciaRepository;
 import br.pucpr.AlertCity.repository.UrgenciaRepository;
@@ -52,10 +53,68 @@ public class OcorrenciaService {
     }
 
     public List<OcorrenciaDTO> listar() {
+        return listar(null);
+    }
+
+    public List<OcorrenciaDTO> listar(String filter) {
+        if (filter == null || filter.isBlank()) {
+            return ocorrenciaRepository.findAll()
+                    .stream()
+                    .map(this::converterParaDTO)
+                    .toList();
+        }
+
+        String[] parts = filter.split("=", 2);
+        if (parts.length != 2 || parts[0].isBlank()) {
+            throw new FiltroInvalidoException("Filtro inválido. Use o formato campo=valor.");
+        }
+
+        String field = parts[0].trim().toLowerCase();
+        String value = parts[1].trim();
+        if (value.isBlank()) {
+            throw new FiltroInvalidoException("Filtro inválido. O valor não pode ficar em branco.");
+        }
+
         return ocorrenciaRepository.findAll()
                 .stream()
+                .filter(o -> matchesFilter(o, field, value))
                 .map(this::converterParaDTO)
                 .toList();
+    }
+
+    private boolean matchesFilter(Ocorrencia o, String field, String value) {
+        switch (field) {
+            case "id":
+                return o.getId() != null && o.getId().toString().equals(value);
+            case "titulo":
+                return matches(o.getTitulo(), value);
+            case "descricao":
+                return matches(o.getDescricao(), value);
+            case "tipo":
+                return matches(o.getTipo(), value);
+            case "urgencia":
+                return matches(o.getUrgencia(), value);
+            case "status":
+                return matches(o.getStatus(), value);
+            case "cep":
+                return matches(o.getCep(), value);
+            case "rua":
+                return matches(o.getRua(), value);
+            case "bairronome":
+                return matches(o.getBairroNome(), value);
+            case "usuarioid":
+            case "usuario_id":
+                return o.getUsuario() != null && o.getUsuario().getId() != null && o.getUsuario().getId().toString().equals(value);
+            case "bairroid":
+            case "bairro_id":
+                return o.getBairro() != null && o.getBairro().getId() != null && o.getBairro().getId().toString().equals(value);
+            default:
+                throw new FiltroInvalidoException("Campo de filtro inválido: " + field);
+        }
+    }
+
+    private boolean matches(String source, String filter) {
+        return source != null && source.toLowerCase().contains(filter.toLowerCase());
     }
 
     private OcorrenciaDTO converterParaDTO(Ocorrencia o) {
