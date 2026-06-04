@@ -1,5 +1,7 @@
 package br.pucpr.AlertCity.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.Data;
 
 @Data
@@ -19,4 +21,5 @@ public class OcorrenciaDTO {
     private String bairroNome;
     private Double lat;
     private Double lng;
+    private LocalDateTime data;
 }

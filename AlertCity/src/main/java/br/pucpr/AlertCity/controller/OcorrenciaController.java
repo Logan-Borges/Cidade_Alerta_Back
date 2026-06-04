@@ -22,8 +22,8 @@ public class OcorrenciaController {
     }
 
     @GetMapping
-    public List<OcorrenciaDTO> listar() {
-        return service.listar();
+    public List<OcorrenciaDTO> listar(@RequestParam(value = "filter", required = false) String filter) {
+        return service.listar(filter);
     }
 
     @PutMapping("/{id}")
