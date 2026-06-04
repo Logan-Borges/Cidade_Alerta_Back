@@ -43,11 +43,12 @@ public class AuthService {
             AuthResponse response = new AuthResponse();
             response.setEmail(user.getEmail());
             response.setToken(token);
+            response.setRole(auth.getRole().name());
 
             return response;
 
         } catch (Exception e) {
-            e.printStackTrace(); // 🔥 ISSO AQUI É O SEGREDO
+            e.printStackTrace();
             throw e;
         }
     }
