@@ -13,7 +13,7 @@ import br.pucpr.AlertCity.security.UserAuthentication;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-
+import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UrgenciaService {
@@ -46,6 +46,11 @@ public class UrgenciaService {
                 });
     }
 
+    public List<Long> listarOcorrenciasCurtidas(Authentication authentication) {
+        Usuario usuario = resolverUsuarioAutenticado(authentication);
+        return urgenciaRepository.findOcorrenciaIdsByUsuarioId(usuario.getId());
+    }
+
     private Usuario resolverUsuario(UrgenciaRequestDTO dto, Authentication authentication) {
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
@@ -66,5 +71,24 @@ public class UrgenciaService {
 
         return usuarioRepository.findById(dto.getUsuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuario nao encontrado"));
+    }
+
+    private Usuario resolverUsuarioAutenticado(Authentication authentication) {
+        if (authentication == null) {
+            throw new RuntimeException("Autenticacao e obrigatoria");
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserAuthentication userAuthentication) {
+            return usuarioRepository.findByEmail(userAuthentication.getEmail())
+                    .orElseThrow(() -> new RuntimeException("Usuario autenticado nao encontrado"));
+        }
+
+        if (authentication.getName() != null) {
+            return usuarioRepository.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new RuntimeException("Usuario autenticado nao encontrado"));
+        }
+
+        throw new RuntimeException("Nao foi possivel resolver usuario autenticado");
     }
 }

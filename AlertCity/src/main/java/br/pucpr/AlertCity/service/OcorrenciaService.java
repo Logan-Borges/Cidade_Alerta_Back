@@ -133,6 +133,7 @@ public class OcorrenciaService {
         dto.setLat(o.getLat());
         dto.setLng(o.getLng());
         dto.setTotalUrgencia(urgenciaRepository.countByOcorrencia_Id(o.getId()));
+        dto.setData(o.getData());
 
         if (o.getFoto() != null) {
             dto.setFotoBase64(Base64.getEncoder().encodeToString(o.getFoto()));
