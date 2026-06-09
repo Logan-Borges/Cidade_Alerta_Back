@@ -25,6 +25,7 @@ public class OcorrenciaService {
     private final BairroRepository bairroRepository;
 
     public OcorrenciaDTO salvar(OcorrenciaDTO dto) {
+
         Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
@@ -45,9 +46,8 @@ public class OcorrenciaService {
         ocorrencia.setLat(dto.getLat());
         ocorrencia.setLng(dto.getLng());
 
-        if (dto.getFotoBase64() != null) {
-            ocorrencia.setFoto(Base64.getDecoder().decode(dto.getFotoBase64()));
-        }
+        // ✅ CORREÇÃO AQUI (aceita base64 puro e dataURL)
+        ocorrencia.setFoto(decodeBase64Image(dto.getFotoBase64()));
 
         return converterParaDTO(ocorrenciaRepository.save(ocorrencia));
     }
@@ -57,6 +57,7 @@ public class OcorrenciaService {
     }
 
     public List<OcorrenciaDTO> listar(String filter) {
+
         if (filter == null || filter.isBlank()) {
             return ocorrenciaRepository.findAll()
                     .stream()
@@ -65,12 +66,14 @@ public class OcorrenciaService {
         }
 
         String[] parts = filter.split("=", 2);
+
         if (parts.length != 2 || parts[0].isBlank()) {
             throw new FiltroInvalidoException("Filtro inválido. Use o formato campo=valor.");
         }
 
         String field = parts[0].trim().toLowerCase();
         String value = parts[1].trim();
+
         if (value.isBlank()) {
             throw new FiltroInvalidoException("Filtro inválido. O valor não pode ficar em branco.");
         }
@@ -104,10 +107,14 @@ public class OcorrenciaService {
                 return matches(o.getBairroNome(), value);
             case "usuarioid":
             case "usuario_id":
-                return o.getUsuario() != null && o.getUsuario().getId() != null && o.getUsuario().getId().toString().equals(value);
+                return o.getUsuario() != null &&
+                        o.getUsuario().getId() != null &&
+                        o.getUsuario().getId().toString().equals(value);
             case "bairroid":
             case "bairro_id":
-                return o.getBairro() != null && o.getBairro().getId() != null && o.getBairro().getId().toString().equals(value);
+                return o.getBairro() != null &&
+                        o.getBairro().getId() != null &&
+                        o.getBairro().getId().toString().equals(value);
             default:
                 throw new FiltroInvalidoException("Campo de filtro inválido: " + field);
         }
@@ -143,6 +150,7 @@ public class OcorrenciaService {
     }
 
     public OcorrenciaDTO atualizar(Long id, OcorrenciaDTO dto) {
+
         Ocorrencia o = ocorrenciaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ocorrência não encontrada"));
 
@@ -157,9 +165,8 @@ public class OcorrenciaService {
         o.setLat(dto.getLat());
         o.setLng(dto.getLng());
 
-        if (dto.getFotoBase64() != null) {
-            o.setFoto(Base64.getDecoder().decode(dto.getFotoBase64()));
-        }
+        // ✅ MESMA CORREÇÃO AQUI
+        o.setFoto(decodeBase64Image(dto.getFotoBase64()));
 
         return converterParaDTO(ocorrenciaRepository.save(o));
     }
@@ -169,5 +176,20 @@ public class OcorrenciaService {
             throw new RuntimeException("Ocorrência não encontrada");
         }
         ocorrenciaRepository.deleteById(id);
+    }
+
+    // ✅ MÉTODO CENTRALIZADO (aceita os dois formatos)
+    private byte[] decodeBase64Image(String fotoBase64) {
+
+        if (fotoBase64 == null || fotoBase64.isBlank()) {
+            return null;
+        }
+
+        // remove prefixo data:image/...;base64,
+        if (fotoBase64.contains(",")) {
+            fotoBase64 = fotoBase64.substring(fotoBase64.indexOf(",") + 1);
+        }
+
+        return Base64.getDecoder().decode(fotoBase64);
     }
 }
