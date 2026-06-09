@@ -2,6 +2,7 @@ package br.pucpr.AlertCity.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -48,6 +49,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SenhaInvalidaException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErroResponse handleSenhaInvalida(SenhaInvalidaException ex, HttpServletRequest request) {
+
         return ErroResponse.builder()
                 .status(401)
                 .erro(ex.getMessage())
@@ -56,10 +58,10 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    // ── T49: Status inválido ──────────────────────────────────────────────────
     @ExceptionHandler(StatusInvalidoException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErroResponse handleStatusInvalido(StatusInvalidoException ex, HttpServletRequest request) {
+
         return ErroResponse.builder()
                 .status(400)
                 .erro(ex.getMessage())
@@ -68,9 +70,23 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErroResponse handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
+
+        return ErroResponse.builder()
+                .status(403)
+                .erro("Acesso negado")
+                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErroResponse handleGeral(Exception ex, HttpServletRequest request) {
+
+        ex.printStackTrace(); // útil durante o desenvolvimento
 
         return ErroResponse.builder()
                 .status(500)
