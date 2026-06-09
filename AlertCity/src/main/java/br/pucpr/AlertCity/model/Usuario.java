@@ -47,7 +47,7 @@ public class Usuario {
     private Bairro bairro;
 
     @Enumerated(EnumType.STRING)
-    private Role role = Role.ADMIN;
+    private Role role = Role.USER;
 
 }
 
