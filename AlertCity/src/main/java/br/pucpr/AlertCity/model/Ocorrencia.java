@@ -36,7 +36,7 @@ public class Ocorrencia {
     private Double lng;
 
     @Lob
-    @Column(name = "foto")
+    @Column(name = "foto", columnDefinition = "LONGBLOB")
     private byte[] foto;
 
     private LocalDateTime data = LocalDateTime.now();
