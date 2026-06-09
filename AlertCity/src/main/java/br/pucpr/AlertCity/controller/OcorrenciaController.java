@@ -1,10 +1,11 @@
 package br.pucpr.AlertCity.controller;
 
 import br.pucpr.AlertCity.dto.OcorrenciaDTO;
+import br.pucpr.AlertCity.dto.StatusUpdateDTO;
 import br.pucpr.AlertCity.service.OcorrenciaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,7 +15,6 @@ import java.util.List;
 public class OcorrenciaController {
 
     private final OcorrenciaService service;
-
 
     @PostMapping
     public OcorrenciaDTO criar(@RequestBody OcorrenciaDTO dto) {
@@ -29,6 +29,14 @@ public class OcorrenciaController {
     @PutMapping("/{id}")
     public OcorrenciaDTO atualizar(@PathVariable Long id, @RequestBody OcorrenciaDTO dto) {
         return service.atualizar(id, dto);
+    }
+
+    // ── T49: Atualizar apenas o status (exclusivo ADM) ────────────────────────
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public OcorrenciaDTO atualizarStatus(@PathVariable Long id,
+                                         @RequestBody StatusUpdateDTO dto) {
+        return service.atualizarStatus(id, dto.getStatus());
     }
 
     @DeleteMapping("/{id}")

@@ -1,10 +1,11 @@
 package br.pucpr.AlertCity.service;
 
 import br.pucpr.AlertCity.dto.OcorrenciaDTO;
+import br.pucpr.AlertCity.exception.FiltroInvalidoException;
+import br.pucpr.AlertCity.exception.StatusInvalidoException;
 import br.pucpr.AlertCity.model.Bairro;
 import br.pucpr.AlertCity.model.Ocorrencia;
 import br.pucpr.AlertCity.model.Usuario;
-import br.pucpr.AlertCity.exception.FiltroInvalidoException;
 import br.pucpr.AlertCity.repository.BairroRepository;
 import br.pucpr.AlertCity.repository.OcorrenciaRepository;
 import br.pucpr.AlertCity.repository.UrgenciaRepository;
@@ -18,6 +19,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class OcorrenciaService {
+
+    private static final List<String> STATUS_VALIDOS =
+            List.of("ativo", "em_analise", "em_atendimento", "resolvido");
 
     private final OcorrenciaRepository ocorrenciaRepository;
     private final UrgenciaRepository urgenciaRepository;
@@ -168,6 +172,20 @@ public class OcorrenciaService {
         // ✅ MESMA CORREÇÃO AQUI
         o.setFoto(decodeBase64Image(dto.getFotoBase64()));
 
+        return converterParaDTO(ocorrenciaRepository.save(o));
+    }
+
+    // ── T49: Atualizar apenas o status (ADM) ─────────────────────────────────
+    public OcorrenciaDTO atualizarStatus(Long id, String novoStatus) {
+        if (!STATUS_VALIDOS.contains(novoStatus)) {
+            throw new StatusInvalidoException(
+                    "Status inválido: \"" + novoStatus + "\". Valores aceitos: " + STATUS_VALIDOS);
+        }
+
+        Ocorrencia o = ocorrenciaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ocorrência não encontrada"));
+
+        o.setStatus(novoStatus);
         return converterParaDTO(ocorrenciaRepository.save(o));
     }
 

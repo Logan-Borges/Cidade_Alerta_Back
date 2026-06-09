@@ -1,6 +1,5 @@
 package br.pucpr.AlertCity.exception;
 
-import br.pucpr.AlertCity.exception.FiltroInvalidoException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +50,18 @@ public class GlobalExceptionHandler {
     public ErroResponse handleSenhaInvalida(SenhaInvalidaException ex, HttpServletRequest request) {
         return ErroResponse.builder()
                 .status(401)
+                .erro(ex.getMessage())
+                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    // ── T49: Status inválido ──────────────────────────────────────────────────
+    @ExceptionHandler(StatusInvalidoException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErroResponse handleStatusInvalido(StatusInvalidoException ex, HttpServletRequest request) {
+        return ErroResponse.builder()
+                .status(400)
                 .erro(ex.getMessage())
                 .path(request.getRequestURI())
                 .timestamp(LocalDateTime.now())
